@@ -7,14 +7,11 @@ class OverLayScreen extends StatefulWidget {
 }
 
 class _OverLayScreenState extends State<OverLayScreen> {
-  String toastShow = "悬浮框";
-  OverlayEntry overlayEntry;
-
   startRecord() {
     print("#开始录制");
   }
 
-  stopRecord(RecordResponse data) {
+  stopRecord(data) {
     print("#结束束录制");
     print("#音频文件位置" + data.path);
     print("#音频录制时长" + data.audioTimeLength.toString());

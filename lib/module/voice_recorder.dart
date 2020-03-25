@@ -62,8 +62,8 @@ class VoiceRecorder {
       _overlayEntry = new OverlayEntry(builder: (BuildContext context) {
         return w;
       });
+      Overlay.of(context).insert(_overlayEntry);
     }
-    Overlay.of(context).insert(_overlayEntry);
   }
 
   _hide() {
@@ -109,7 +109,7 @@ class VoiceRecorder {
       ///录制过程监听录制的声音的大小 方便做语音动画显示图片的样式
       _getInstance().recordPlugin.responseFromAmplitude.listen((data) {
         var voiceData = double.parse(data.msg);
-        _getInstance()._indicatorKey.currentState.updateStatus(voiceData);
+        _getInstance()._indicatorKey.currentState?.updateStatus(voiceData);
         print("振幅大小   " + voiceData.toString());
       });
     }
