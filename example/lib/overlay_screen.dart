@@ -20,7 +20,7 @@ class _OverLayScreenState extends State<OverLayScreen> {
   @override
   void initState() {
     super.initState();
-    VoiceRecorder.init(startCallBack: startRecord, stopCallBack: stopRecord);
+    VoiceRecorder.init();
   }
 
   @override
@@ -35,8 +35,9 @@ class _OverLayScreenState extends State<OverLayScreen> {
             children: <Widget>[
               GestureDetector(
                 child: Icon(Icons.voice_chat, size: 36),
-                onTapDown: (td) => VoiceRecorder.start(),
-                onTapUp: (tu) => VoiceRecorder.stop(),
+                onTapDown: (td) =>
+                    VoiceRecorder.start(startCallback: startRecord),
+                onTapUp: (tu) => VoiceRecorder.stop(stopCallback: stopRecord),
               )
             ],
           ),

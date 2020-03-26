@@ -8,8 +8,8 @@ class VoiceRecorder {
   Indicator _indicator;
   GlobalKey<IndicatorState> _indicatorKey;
   FlutterPluginRecord recordPlugin;
-  Function startCallBack;
-  Function stopCallBack;
+  Function startCallback;
+  Function stopCallback;
 
   OverlayEntry _overlayEntry;
 
@@ -27,7 +27,8 @@ class VoiceRecorder {
     return _instance;
   }
 
-  static start() {
+  static start({Function startCallback}) {
+    _getInstance().startCallback = startCallback;
     if (_getInstance()._indicator == null) {
       GlobalKey<IndicatorState> indicatorKey = GlobalKey<IndicatorState>();
       Widget indicator = Indicator(
@@ -42,7 +43,8 @@ class VoiceRecorder {
     _getInstance().recordPlugin.start();
   }
 
-  static stop() async {
+  static stop({Function stopCallback}) async {
+    _getInstance().stopCallback = stopCallback;
     _getInstance()._hide();
     if (_getInstance().recordPlugin != null) {
       await _getInstance().recordPlugin.stop();
@@ -51,10 +53,16 @@ class VoiceRecorder {
   }
 
   static dispose() {
+    removeCallback();
     if (_getInstance().recordPlugin != null) {
       _getInstance().recordPlugin.dispose();
       _getInstance().recordPlugin = null;
     }
+  }
+
+  static removeCallback() {
+    _getInstance().startCallback = null;
+    _getInstance().stopCallback = null;
   }
 
   _show(Widget w) {
@@ -74,10 +82,7 @@ class VoiceRecorder {
   }
 
   ///初始化语音录制的方法
-  static init({Function startCallBack, Function stopCallBack}) {
-    _getInstance().startCallBack = startCallBack;
-    _getInstance().stopCallBack = stopCallBack;
-
+  static init() {
     if (_getInstance().recordPlugin == null) {
       _getInstance().recordPlugin = new FlutterPluginRecord();
 
@@ -95,13 +100,13 @@ class VoiceRecorder {
         if (data.msg == "onStop") {
           ///结束录制时会返回录制文件的地址方便上传服务器
           print("onStop  " + data.path);
-          if (_getInstance().stopCallBack != null) {
-            _getInstance().stopCallBack(data);
+          if (_getInstance().stopCallback != null) {
+            _getInstance().stopCallback(data);
           }
         } else if (data.msg == "onStart") {
           print("onStart --");
-          if (_getInstance().startCallBack != null) {
-            _getInstance().startCallBack();
+          if (_getInstance().startCallback != null) {
+            _getInstance().startCallback();
           }
         }
       });
@@ -112,7 +117,7 @@ class VoiceRecorder {
         _getInstance()._indicatorKey.currentState?.updateStatus(voiceData);
         print("振幅大小   " + voiceData.toString());
       });
+      _getInstance().recordPlugin.init();
     }
-    _getInstance().recordPlugin.init();
   }
 }
